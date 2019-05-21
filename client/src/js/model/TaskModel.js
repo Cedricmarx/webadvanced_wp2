@@ -1,11 +1,11 @@
 "use strict";
 
-export default class PersonModel {
+export default class TaskModel {
     constructor(url) {
         this.url = url;
     }
 
-    listPersons() {
+    listTasks() {
         return fetch(this.url, {method: "GET"})
             .then((response) => {
                 if (response.status != 200) {
@@ -15,7 +15,7 @@ export default class PersonModel {
             });
     }
 
-    addPersonByIdAndName(id, name) {
+    addTask(task) {
         if (!(typeof id == 'string' && /^[0-9]+$/.test(id) && parseInt(id) > 0)) {
             return Promise.reject(new Error("id moet een string zijn met een getal > 0"));
         }

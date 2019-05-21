@@ -31,7 +31,7 @@ class TaskControllerTest extends TestCase
     public function testaddPersonById_validPerson_showPersonAndStatus201($id, $name){
 		$person=['id'=>$id,'name'=>$name];
         $this->personModel->expects($this->atLeastOnce())
-            ->method('addPersonByIdAndName')
+            ->method('addTask')
             ->with( $this->equalTo($id), $this->equalTo($name))
             ->will($this->returnValue($person));
 

@@ -1,27 +1,27 @@
 "use strict";
 
-import PersonController from './controller/PersonController';
-import PersonModel from './model/PersonModel';
-import PersonView from './view/PersonView';
-import PersonsView from './view/PersonsView';
+import TaskController from './controller/TaskController';
+import TaskModel from './model/TaskModel';
+import TaskView from './view/TaskView';
+import TasksView from './view/TasksView';
 import ErrorView from './view/ErrorView';
 
 let url = 'http://192.168.33.22/api/tasks/';
 
-let personView;
-let personsView;
+let taskView;
+let tasksView;
 let errorView;
-let personModel;
-let personController;
+let taskModel;
+let taskController;
 
 window.addEventListener("load", handleWindowLoad);
 
 function handleWindowLoad() {
-    personView = new PersonView();
-    personsView = new PersonsView();
+    taskView = new TaskView();
+    tasksView = new TasksView();
     errorView = new ErrorView();
-    personModel = new PersonModel(url);
-    personController = new PersonController(personModel, personView, personsView, errorView);
+    taskModel = new TaskModel(url);
+    taskController = new TaskController(taskModel, taskView, tasksView, errorView);
 
     let btnGETPersons = document.getElementById("btngetpersons");
     btnGETPersons.addEventListener("click", handleClickGetAllPersons);
@@ -30,11 +30,11 @@ function handleWindowLoad() {
 }
 
 function handleClickGetAllPersons() {
-    personController.listPersons();
+    taskController.listTasks();
 }
 
 function handleClickPUTPerson() {
     let id = document.getElementById("txtid").value;
     let name = document.getElementById("txtname").value;
-    personController.addPersonByIdAndName(id, name);
+    taskController.addTask(task);
 }

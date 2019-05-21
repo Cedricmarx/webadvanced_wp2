@@ -1,7 +1,7 @@
 "use strict";
 import View from './View';
 
-export default class PersonView extends View {
+export default class TaskView extends View {
 
     show(data) {
         let person = data.person;
