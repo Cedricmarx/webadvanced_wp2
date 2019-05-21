@@ -6,7 +6,7 @@ import PersonView from './view/PersonView';
 import PersonsView from './view/PersonsView';
 import ErrorView from './view/ErrorView';
 
-let url = 'http://192.168.33.22/api/persons/';
+let url = 'http://192.168.33.22/api/tasks/';
 
 let personView;
 let personsView;

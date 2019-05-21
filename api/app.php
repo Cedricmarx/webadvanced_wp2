@@ -26,7 +26,7 @@ try {
 $personModel = new PDOTaskModel($pdo);
 $jsonPersonView = new JsonTaskView();
 $jsonPersonsView = new JsonTasksView();
-$personController = new TaskController($personModel, $jsonPersonView,$jsonPersonsView);
+$taskController = new TaskController($personModel, $jsonPersonView,$jsonPersonsView);
 
 
 $router = new AltoRouter();
@@ -34,23 +34,23 @@ $router->setBasePath('/api/');
 
 $router->map(
     'GET',
-    'persons/',
-    function () use ($personController) {
-        $personController->listTasks();
+    'tasks/',
+    function () use ($taskController) {
+        $taskController->listTasks();
     }
 );
 
 $router->map(
     'PUT',
     'persons/[i:id]',
-    function ($id) use ($personController) {
+    function ($id) use ($taskController) {
         $entityBody = file_get_contents('php://input','r');
         $json = json_decode($entityBody);
         $name=null;
         if(isset($json->name)) {
             $name = $json->name;
         }
-        $personController->addPersonByIdAndName($id,$name);
+        $taskController->addPersonByIdAndName($id,$name);
     }
 );
 
