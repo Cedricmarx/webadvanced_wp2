@@ -4,12 +4,11 @@ use \controller\TaskController;
 
 class TaskControllerTest extends TestCase
 {
-
     public function setUp() : void
     {
         $this->personModel = $this->getMockBuilder('\model\TaskModel')
             ->disableOriginalConstructor()
-			->getMock();
+            ->getMock();
         $this->jsonPersonView = $this->getMockBuilder('\view\JsonTaskView')
             ->disableOriginalConstructor()
             ->getMock();
@@ -28,21 +27,20 @@ class TaskControllerTest extends TestCase
     /**
      * @dataProvider providerPersons
      **/
-    public function testaddPersonById_validPerson_showPersonAndStatus201($id, $name){
-		$person=['id'=>$id,'name'=>$name];
+    public function testaddPersonById_validPerson_showPersonAndStatus201($id, $name)
+    {
+        $person=['id'=>$id,'name'=>$name];
         $this->personModel->expects($this->atLeastOnce())
             ->method('addTask')
-            ->with( $this->equalTo($id), $this->equalTo($name))
+            ->with($this->equalTo($id), $this->equalTo($name))
             ->will($this->returnValue($person));
 
-		$data=['person' => $person, 'statuscode' => 201];
+        $data=['person' => $person, 'statuscode' => 201];
 
         $this->jsonPersonView->expects($this->atLeastOnce())
             ->method('show')
             ->with($this->equalTo($data));
         $personController = new TaskController($this->personModel, $this->jsonPersonView, $this->jsonPersonsView);
-        $personController->addPersonByIdAndName($id,$name);
+        $personController->addPersonByIdAndName($id, $name);
     }
-
-
 }

@@ -1,4 +1,5 @@
 RewriteEngine on
+RewriteBase /api/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule (.*)  app.php [L]
 

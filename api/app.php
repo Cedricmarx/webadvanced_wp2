@@ -7,9 +7,9 @@ use view\JsonTaskView;
 use view\JsonTasksView;
 use controller\TaskController;
 
-$user = 'root';
-$password = 'root';
-$database = 'persondb';
+$user = 'admin';
+$password = 'admin';
+$database = 'laravel_webadv';
 $server = 'localhost';
 $pdo = null;
 try {
@@ -18,15 +18,15 @@ try {
         PDO::ATTR_ERRMODE,
         PDO::ERRMODE_EXCEPTION
     );
-} catch (Exception $e){
+} catch (Exception $e) {
     http_response_code(500);
     exit();
 }
 
-$personModel = new PDOTaskModel($pdo);
-$jsonPersonView = new JsonTaskView();
-$jsonPersonsView = new JsonTasksView();
-$taskController = new TaskController($personModel, $jsonPersonView,$jsonPersonsView);
+$taskModel = new PDOTaskModel($pdo);
+$jsonTaskView = new JsonTaskView();
+$jsonTaskView = new JsonTasksView();
+$taskController = new TaskController($taskModel, $jsonTaskView, $jsonTaskView);
 
 
 $router = new AltoRouter();
@@ -40,20 +40,20 @@ $router->map(
     }
 );
 
-$router->map(
-    'PUT',
-    'persons/[i:id]',
-    function ($id) use ($taskController) {
-        $entityBody = file_get_contents('php://input','r');
-        $json = json_decode($entityBody);
-        $name=null;
-        if(isset($json->name)) {
-            $name = $json->name;
-        }
-        $taskController->addPersonByIdAndName($id,$name);
-    }
-);
+$router->map('POST', 'tasks/create/', function () use ($taskController) {
+    $_POST = json_decode(file_get_contents('php://input'));
 
+    $task = null;
+
+    if (isset($_POST->note) && isset($_POST->category) && isset($_POST->date) && isset($_POST->dueDate)) {
+        $task->note = $_POST->note;
+        $task->category = $_POST->category;
+        $task->date = $_POST->date;
+        $task->dueDate = $_POST->dueDate;
+    }
+
+    $taskController->addTask($task);
+});
 
 $match = $router->match();
 if ($match && is_callable($match['target'])) {

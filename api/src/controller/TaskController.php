@@ -32,7 +32,6 @@ class TaskController
         $this->jsonTasksView->show(['tasks' => $tasks, 'statuscode' => $statuscode]);
     }
 
-
     public function addTask($task)
     {
         $statuscode = 201;

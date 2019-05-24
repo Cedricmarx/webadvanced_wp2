@@ -6,10 +6,10 @@ class PDOTaskModelTest extends TestCase
 {
     public function setUp() : void
     {
-		$user = 'root';
-		$password = 'root';
-		$database = 'testpersondb';
-		$server = 'localhost';
+        $user = 'root';
+        $password = 'root';
+        $database = 'testpersondb';
+        $server = 'localhost';
         $this->connection = new PDO("mysql:host=$server;dbname=$database", $user, $password);
         $this->connection->setAttribute(
             PDO::ATTR_ERRMODE,
@@ -23,7 +23,7 @@ class PDOTaskModelTest extends TestCase
                    )');
 
         $persons=$this->providerPersons();
-        foreach($persons as $person){
+        foreach ($persons as $person) {
             $this->connection->exec("INSERT INTO persons (id, name) VALUES (".$person['id'].",'".$person['name']."');");
         }
     }
@@ -76,9 +76,9 @@ class PDOTaskModelTest extends TestCase
         $personModel = new PDOTaskModel($this->connection);
         $actualPersons = $personModel->listTasks();
         $expectedPersons=$this->providerPersons();
-        $this->assertEquals('array',gettype($actualPersons));
-        $this->assertEquals(count($expectedPersons)  ,count($actualPersons));
-        foreach($actualPersons as $actualPerson  ){
+        $this->assertEquals('array', gettype($actualPersons));
+        $this->assertEquals(count($expectedPersons), count($actualPersons));
+        foreach ($actualPersons as $actualPerson) {
             $this->assertContains($actualPerson, $expectedPersons);
         }
     }
@@ -95,8 +95,8 @@ class PDOTaskModelTest extends TestCase
 
         $personModel = new PDOTaskModel($this->connection);
         $actualPersons = $personModel->listTasks();
-        $this->assertEquals('array',gettype($actualPersons));
-        $this->assertEquals(0,count($actualPersons));
+        $this->assertEquals('array', gettype($actualPersons));
+        $this->assertEquals(0, count($actualPersons));
     }
 
     /**
@@ -138,5 +138,4 @@ class PDOTaskModelTest extends TestCase
         $personModel = new PDOTaskModel($this->connection);
         $this->assertFalse($personModel->idExists($id));
     }
-
 }

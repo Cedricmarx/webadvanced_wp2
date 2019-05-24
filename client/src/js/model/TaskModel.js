@@ -6,29 +6,20 @@ export default class TaskModel {
     }
 
     listTasks() {
-        return fetch(this.url, {method: "GET"})
+        return fetch(this.url, { method: 'GET' })
             .then((response) => {
                 if (response.status != 200) {
-                    throw new Error("rejected:" + response.status);
+                    throw new Error('rejected:' + response.status);
                 }
                 return response.json();
             });
     }
 
     addTask(task) {
-        if (!(typeof id == 'string' && /^[0-9]+$/.test(id) && parseInt(id) > 0)) {
-            return Promise.reject(new Error("id moet een string zijn met een getal > 0"));
-        }
-
-        if (!(typeof name == 'string' && name.length >= 2)) {
-            return Promise.reject(new Error("name moet een string met minstens 2 karakters zijn"));
-        }
-
-        let person = {name: name};
-        return fetch(this.url + id, {method: "PUT", body: JSON.stringify(person)})
+        return fetch(this.url + 'create/', { method: 'POST', body: JSON.stringify(task) })
             .then((response) => {
-                if (response.status != 201 && response.status != 200) {
-                    throw new Error("rejected:" + response.status);
+                if (response.status != 201) {
+                    throw new Error('rejected:' + response.status);
                 }
                 return response.json();
             });
