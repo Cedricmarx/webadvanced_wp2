@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "scss": "sass --watch src/scss:public/css"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,9 @@
     "babel-preset-env": "^1.7.0",
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "sass": "^1.20.1"
   }
 }

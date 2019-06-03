@@ -1,142 +1,94 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use \model\PDOTaskModel;
+use model\TaskModel;
 
 class PDOTaskModelTest extends TestCase
 {
-    public function setUp() : void
+    public function setUp(): void
     {
-		$user = 'root';
-		$password = 'root';
-		$database = 'testpersondb';
-		$server = 'localhost';
+        $user = 'root';
+        $password = '';
+        $database = 'webadv';
+        $server = 'localhost';
         $this->connection = new PDO("mysql:host=$server;dbname=$database", $user, $password);
         $this->connection->setAttribute(
             PDO::ATTR_ERRMODE,
             PDO::ERRMODE_EXCEPTION
         );
-        $this->connection->exec('DROP TABLE IF EXISTS persons');
-        $this->connection->exec('CREATE TABLE persons (
+        $this->connection->exec('DROP TABLE IF EXISTS tasks');
+        $this->connection->exec('CREATE TABLE tasks (
                         id INT, 
-                        name VARCHAR(255),
+                        note VARCHAR(255),
+                        category VARCHAR(255),
+                        date TIMESTAMP,
+                        dueDate TIMESTAMP,
                         PRIMARY KEY (id)
                    )');
 
-        $persons=$this->providerPersons();
-        foreach($persons as $person){
-            $this->connection->exec("INSERT INTO persons (id, name) VALUES (".$person['id'].",'".$person['name']."');");
+        $tasks = $this->providerTasks();
+        foreach ($tasks as $task) {
+            $this->connection->exec("INSERT INTO tasks (id, note, category, date, dueDate) VALUES 
+            (" . $task['id'] . ",'" . $task['note'] . "','" . $task['category'] . "','" . $task['date'] . "','" . $task['dueDate'] . "');");
         }
     }
 
-    public function tearDown() : void
+    public function providerTasks()
     {
-        $this->connection = null;
+        return [
+            ['id' => 1, 'note' => 'testnote1', 'category' => 'testcategory', 'date' => '2018-02-14 00:00:00', 'dueDate' => '2018-02-14 00:00:00'],
+            ['id' => 2, 'note' => 'testnote2', 'category' => 'testcategory2', 'date' => '2018-02-14 00:00:00', 'dueDate' => '2018-02-14 00:00:00'],
+            ['id' => 3, 'note' => 'testnote3', 'category' => 'testcategory3', 'date' => '2018-02-14 00:00:00', 'dueDate' => '2018-02-14 00:00:00']
+        ];
     }
 
-    public function providerPersons()
+    public function testListTasks()
     {
-        return [['id'=>'1','name'=>'testname1'], ['id'=>'2','name'=>'testname2'],['id'=>'3','name'=>'testname3']];
-    }
-
-    public function providervalidExistingIds()
-    {
-        return [['1'], ['2'], ['3']];
-    }
-
-    public function providervalidUnexistingIds()
-    {
-        return [['4'], ['100']];
-    }
-
-
-    public function providervalidIds()
-    {
-        return [['1'], ['2'], ['3'],['100'],['1000']];
-    }
-
-    public function providerInvalidIds()
-    {
-        return [['0'], ['-1'], ['1.2'], ["aaa"], [12], [1.2]];
-    }
-
-    public function providerValidNames()
-    {
-        return [['aa'], ['Aa'], ['aaa'], ['aa11']];
-    }
-
-    public function providerInvalidNames()
-    {
-        return [[''], ['A'], [1.2], [12]];
-    }
-
-
-
-    public function testListPersons_personsInDatabase_ArrayPersons()
-    {
-        $personModel = new PDOTaskModel($this->connection);
-        $actualPersons = $personModel->listTasks();
-        $expectedPersons=$this->providerPersons();
-        $this->assertEquals('array',gettype($actualPersons));
-        $this->assertEquals(count($expectedPersons)  ,count($actualPersons));
-        foreach($actualPersons as $actualPerson  ){
-            $this->assertContains($actualPerson, $expectedPersons);
+        $taskModel = new PDOTaskModel($this->connection);
+        $actualTasks = $taskModel->listTasks();
+        $expectedTasks = $this->providerTasks();
+        $this->assertEquals('array', gettype($actualTasks));
+        $this->assertEquals(count($expectedTasks), count($actualTasks));
+        $this->assertEquals($actualTasks, $expectedTasks);
+        foreach ($actualTasks as $actualTask) {
+            $this->assertContains($actualTask, $expectedTasks);
         }
     }
 
-    public function testListPersons_noPersonsInDatabase_EmptyArray()
+    public function testListTasksNoTasksInDatabaseEmptyArray()
     {
-        $this->connection->exec('DROP TABLE persons');
+        $this->connection->exec('DROP TABLE tasks');
 
-        $this->connection->exec('CREATE TABLE persons (
+        $this->connection->exec('CREATE TABLE tasks (
                         id INT, 
-                        name VARCHAR(255),
-                        PRIMARY KEY (id)
-                   )');
+                        note VARCHAR(255),
+                        category VARCHAR(255),
+                        date TIMESTAMP,
+                        dueDate TIMESTAMP,
+                        PRIMARY KEY (id)                   
+                        )');
 
-        $personModel = new PDOTaskModel($this->connection);
-        $actualPersons = $personModel->listTasks();
-        $this->assertEquals('array',gettype($actualPersons));
-        $this->assertEquals(0,count($actualPersons));
+        $taskModel = new PDOTaskModel($this->connection);
+        $actualTasks = $taskModel->listTasks();
+        $this->assertEquals('array', gettype($actualTasks));
+        $this->assertEquals(0, count($actualTasks));
     }
 
     /**
      * @expectedException \PDOException
      **/
-    public function testListPersons_noTablePersons_PDOException()
+    public function testListTasksNoTableTasksPDOException()
     {
-        $this->connection->exec('DROP TABLE persons');
+        $this->connection->exec('DROP TABLE tasks');
         $personModel = new PDOTaskModel($this->connection);
         $personModel->listTasks();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @dataProvider providerInvalidIds
-     **/
-    public function testIdExists_invalidId_InvalidArgumentException($id)
+    public function testAddTask()
     {
-        $personModel = new PDOTaskModel($this->connection);
-        $actual=$personModel->idExists($id);
+        $taskModel = new PDOTaskModel($this->connection);
+        $expectedTask = (object)['id' => 1, 'note' => 'testnote1', 'category' => 'testcategory', 'date' => '2018-02-14 00:00:00', 'dueDate' => '2018-02-14 00:00:00'];
+        $actualTask = $taskModel->addTask($expectedTask);
+        $this->assertEquals($expectedTask, $actualTask);
     }
-
-    /**
-     * @dataProvider providerValidExistingIds
-     **/
-
-    public function testIdExists_existingId_True($id)
-    {
-        $personModel = new PDOTaskModel($this->connection);
-        $this->assertTrue($personModel->idExists($id));
-    }
-
-
-    /**
-     * @dataProvider providerValidUnexistingIds
-     **/
-    public function testIdExists_unexistingId_False($id)
-    {
-        $personModel = new PDOTaskModel($this->connection);
-        $this->assertFalse($personModel->idExists($id));
-    }
-
 }

@@ -32,21 +32,16 @@ class TaskController
         $this->jsonTasksView->show(['tasks' => $tasks, 'statuscode' => $statuscode]);
     }
 
-
-    public function addPersonByIdAndName($id, $name)
+    public function addTask($task)
     {
         $statuscode = 201;
-        $person = null;
         try {
-            if ($this->taskModel->idExists($id)) {
-                $statuscode = 200;
-            }
-            $person = $this->taskModel->addPersonByIdAndName($id, $name);
+            $task = $this->taskModel->addTask($task);
         } catch (\InvalidArgumentException $exception) {
             $statuscode = 400;
         } catch (\PDOException $exception) {
             $statuscode = 500;
         }
-        $this->jsonTaskView->show(['person' => $person, 'statuscode' => $statuscode]);
+        $this->jsonTaskView->show(['task' => $task, 'statuscode' => $statuscode]);
     }
 }
