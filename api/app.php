@@ -7,8 +7,8 @@ use view\JsonTaskView;
 use view\JsonTasksView;
 use controller\TaskController;
 
-$user = 'admin';
-$password = 'admin';
+$user = 'root';
+$password = '';
 $database = 'laravel_webadv';
 $server = 'localhost';
 $pdo = null;

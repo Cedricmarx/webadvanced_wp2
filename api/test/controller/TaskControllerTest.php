@@ -4,43 +4,47 @@ use \controller\TaskController;
 
 class TaskControllerTest extends TestCase
 {
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->personModel = $this->getMockBuilder('\model\TaskModel')
+        $this->taskModel = $this->getMockBuilder('\model\TaskModel')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->jsonPersonView = $this->getMockBuilder('\view\JsonTaskView')
+        $this->jsonTaskView = $this->getMockBuilder('\view\JsonTaskView')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->jsonPersonsView = $this->getMockBuilder('\view\JsonTasksView')
+        $this->jsonTasksView = $this->getMockBuilder('\view\JsonTasksView')
             ->disableOriginalConstructor()
             ->getMock();
     }
 
 
-    public function providerPersons()
+    public function providerTasks()
     {
-        return [['id'=>'1','name'=>'testname1'], ['id'=>'2','name'=>'testname2'],['id'=>'3','name'=>'testname3']];
+        return [
+            ['id' => 1, 'note' => 'testnote1', 'category' => 'testcategory', 'date' => '2018-02-14T00:00:00', 'dueDate' => '2018-02-14T00:00:00'],
+            ['id' => 2, 'note' => 'testnote2', 'category' => 'testcategory', 'date' => '2018-02-14T00:00:00', 'dueDate' => '2018-02-14T00:00:00'],
+            ['id' => 3, 'note' => 'testnote3', 'category' => 'testcategory3', 'date' => '2018-02-14T00:00:00', 'dueDate' => '2018-02-14T00:00:00']
+        ];
     }
 
-
-    /**
-     * @dataProvider providerPersons
-     **/
-    public function testaddPersonById_validPerson_showPersonAndStatus201($id, $name)
+///
+//* @dataProvider providerTasks
+///
+    public function testAddTaskValidTaskShowTaskAndStatus201()
     {
-        $person=['id'=>$id,'name'=>$name];
-        $this->personModel->expects($this->atLeastOnce())
+        $tempTask = ['id' => 1, 'note' => 'testnote', 'category' => 'testcategory', 'date' => '2018-02-14T00:00:00', 'dueDate' => '2018-02-14T00:00:00'];
+
+        $this->taskModel->expects($this->atLeastOnce())
             ->method('addTask')
-            ->with($this->equalTo($id), $this->equalTo($name))
-            ->will($this->returnValue($person));
+            ->with($this->equalTo($tempTask))
+            ->will($this->returnValue($tempTask));
 
-        $data=['person' => $person, 'statuscode' => 201];
+        $data = ['task' => $tempTask, 'statuscode' => 201];
 
-        $this->jsonPersonView->expects($this->atLeastOnce())
+        $this->jsonTaskView->expects($this->atLeastOnce())
             ->method('show')
             ->with($this->equalTo($data));
-        $personController = new TaskController($this->personModel, $this->jsonPersonView, $this->jsonPersonsView);
-        $personController->addPersonByIdAndName($id, $name);
+        $personController = new TaskController($this->taskModel, $this->jsonTaskView, $this->jsonTasksView);
+        $personController->addTask($tempTask);
     }
 }
